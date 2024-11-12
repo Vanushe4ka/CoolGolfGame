@@ -3,7 +3,8 @@ using UnityEngine;
 public class ArrowController : MonoBehaviour
 {
     public Transform arrow;  // Трансформ стрелки
-    public const int maxRotateSpeed = 360;
+    public Transform ball;
+    public const int maxRotateSpeed = 180;
     public float rotationSpeed = 0f; // Скорость вращения стрелки (градусов в секунду)
     public float maxRotationAngle = 45f; // Максимальный угол отклонения от центрального направления (в градусах)
 
@@ -12,6 +13,7 @@ public class ArrowController : MonoBehaviour
 
     void Update()
     {
+        transform.position = ball.position;
         // Рассчитаем направление вращения
         float rotationStep = rotationSpeed * Time.deltaTime; // Шаг вращения за кадр
 

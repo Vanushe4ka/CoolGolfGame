@@ -4,12 +4,26 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    [SerializeField] Rigidbody rb;
-    const float forceCoef = 10;
+    public Rigidbody rb;
     [SerializeField] Transform Transform;
-    public void Throw(float force, Vector3 direction)
+    [SerializeField] MeshRenderer meshRenderer;
+    public bool isEnd = false;
+    public void Throw(Vector3 direction, float force)
     {
         rb.isKinematic = false;
-        rb.AddForce(direction * (force * forceCoef), ForceMode.Impulse);
+        rb.AddForce(direction * force, ForceMode.VelocityChange);
+    }
+    public void StopBall()
+    {
+        rb.isKinematic = true;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Lunka")
+        {
+            isEnd = true;
+            meshRenderer.enabled = false;
+            StopBall();
+        }
     }
 }

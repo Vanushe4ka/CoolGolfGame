@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections;
 using System; // дл€ использовани€ делегатов и событий
 
 public class SliderEvents : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public Slider slider;
-
+    public Slider targetValue;
+    public CanvasGroup group;
     // —обытие нажати€
     public event Action OnSliderPressed;
 
@@ -15,7 +17,13 @@ public class SliderEvents : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     // —обытие изменени€ значени€ слайдера
     public event Action<float> OnSliderValueChanged;
-
+    public void SetTargetSlider()
+    {
+        targetValue.gameObject.SetActive(true);
+        targetValue.minValue = 0.1f;
+        targetValue.maxValue = 1;
+        targetValue.value = slider.value;
+    }
     // ¬ызываетс€ при нажатии на слайдер
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -29,7 +37,6 @@ public class SliderEvents : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     {
         // «апускаем событие OnSliderReleased, если на него кто-то подписан
         OnSliderReleased?.Invoke();
-        slider.value = 0;
     }
 
     // Ётот метод будет срабатывать при изменении значени€ слайдера
@@ -45,6 +52,40 @@ public class SliderEvents : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         {
             // ѕодписка на стандартное изменение значени€ слайдера
             slider.onValueChanged.AddListener(OnValueChanged);
+        }
+    }
+    public void HideUnhideSlider(bool isHide)
+    {
+        StartCoroutine(HideSlider(isHide));
+    }
+    
+    public IEnumerator HideSlider(bool isHide)
+    {
+        slider.enabled = false;
+        float time = 0.5f;
+        float timer = 0;
+        while (timer < time)
+        {
+            timer += Time.deltaTime;
+            float t = timer / time; ;
+            if (isHide)
+            {
+                group.alpha = 1 - t;
+            }
+            else
+            {
+                group.alpha = t;
+            }
+            yield return null;
+        }
+        if (isHide)
+        {
+            group.alpha = 0;
+        }
+        else
+        {
+            group.alpha = 1;
+            slider.enabled = true;
         }
     }
 }
