@@ -6,6 +6,8 @@ public class Map : MonoBehaviour
 {
     // Start is called before the first frame update
     public Transform startPoint;
+    public Transform lunkaTransform;
+    public List<Vector2> polygonBounds;
     void Start()
     {
         

@@ -15,6 +15,11 @@ public class UIController : MonoBehaviour
 
     public CanvasGroup selectMapPanel;
     public CanvasGroup addPlayersPanel;
+
+    public CanvasGroup endPanel;
+    public Text endText;
+
+    public Button pauseButton;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +30,21 @@ public class UIController : MonoBehaviour
     void Update()
     {
         
+    }
+    public void PauseButtonClick()
+    {
+        if (Time.timeScale > 0)
+        {
+            Time.timeScale = 0;
+            endText.text = "Game on pause";
+            endPanel.alpha = 1;
+            endPanel.gameObject.SetActive(true);
+        }
+        else
+        {
+            Time.timeScale = 1;
+            endPanel.gameObject.SetActive(false);
+        }
     }
     public void AddPlayerInputField()
     {
@@ -60,14 +80,15 @@ public class UIController : MonoBehaviour
         offsetMin.y += 70; // ”меньшаем значение offsetMin.y, чтобы увеличить отступ снизу
         playersContent.offsetMin = offsetMin;
     }
+    
     public void TryConfirmAddPlayers()
     {
         List<string> names = new List<string>();
         for (int i = 0; i < inputFields.Count; i++)
         {
-            if (string.IsNullOrEmpty(inputFields[i].text.Replace(" ", "")))
+            if (string.IsNullOrEmpty(inputFields[i].text.Replace(" ", "")) || names.Contains(inputFields[i].text))
             {
-                StartCoroutine(Shake(inputFields[i].GetComponent<RectTransform>(),2));
+                StartCoroutine(Shake(inputFields[i].GetComponent<RectTransform>(),3));
             }
             else
             {
@@ -78,6 +99,7 @@ public class UIController : MonoBehaviour
         {
             StartCoroutine(SwitchPanels(addPlayersPanel, null));
             gameController.AddPlayers(names);
+            pauseButton.gameObject.SetActive(true);
         }
     }
     private IEnumerator Shake(RectTransform rectTransform, int firstIndexUnmovedChilds)
@@ -157,5 +179,40 @@ public class UIController : MonoBehaviour
     public void SwitchPanelsAfterSelectMap()
     {
         StartCoroutine(SwitchPanels(selectMapPanel, addPlayersPanel));
+    }
+    public void ShowWinPanel(List<Player> winners, bool isDeadHeat)
+    {
+        pauseButton.gameObject.SetActive(false);
+        if (isDeadHeat)
+        {
+            endText.text = "Dead Heat...";
+        }
+        else
+        {
+            if (winners.Count == 1)
+            {
+                endText.text = winners[0].Name + " is winner!";
+            }
+            else
+            {
+                string winText = winners[0].Name;
+                for (int i = 1; i < winners.Count; i++)
+                {
+                    winText += (i == winners.Count-1? " and " : ", ") + winners[i].Name;
+                }
+                endText.text = winText + " are winners!!!";
+            }
+        }
+        StartCoroutine(SwitchPanels(null, endPanel));
+    }
+    public void RematchButonClick()
+    {
+        if (Time.timeScale < 1)
+        {
+            Time.timeScale = 1;
+            gameController.RemachAfterPause();
+        }
+        StartCoroutine(SwitchPanels(endPanel, selectMapPanel));
+        pauseButton.gameObject.SetActive(false);
     }
 }

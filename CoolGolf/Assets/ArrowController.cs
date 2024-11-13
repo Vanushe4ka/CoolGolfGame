@@ -10,6 +10,7 @@ public class ArrowController : MonoBehaviour
 
     private bool rotatingRight = true; // Ќаправление вращени€ стрелки
     private float currentAngle = 0f; // “екущий угол
+    [SerializeField] Player player;
 
     void Update()
     {
@@ -41,8 +42,8 @@ public class ArrowController : MonoBehaviour
     }
     public void ChangeArrowWithForce(float force)
     {
-        rotationSpeed = maxRotateSpeed * Mathf.Pow(force, 2);
-        arrow.localScale = new Vector3(1, 1, force);
+        rotationSpeed = maxRotateSpeed * Mathf.Pow(force + 0.5f, 2);
+        arrow.localScale = new Vector3(1, 1, force + 0.5f);
     }
     public void HideArrow()
     {
@@ -50,13 +51,21 @@ public class ArrowController : MonoBehaviour
     }
     public void unhideArrow()
     {
-        gameObject.SetActive(true);
-        ChangeArrowWithForce(0);
+        if (!player.isBallMoving)
+        {
+
+            gameObject.SetActive(true);
+            ChangeArrowWithForce(0);
+        }
     }
     // ћетод, чтобы получить текущий вектор направлени€, на который указывает стрелка
     public Vector3 GetDirection()
     {
         // ¬озвращаем направление по оси Z стрелки (стрелка направлена вдоль местной оси Z)
         return arrow.forward;
+    }
+    public void ResetArrowDirection()
+    {
+        arrow.localRotation = Quaternion.Euler(0,0,0);
     }
 }

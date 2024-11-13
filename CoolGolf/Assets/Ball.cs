@@ -8,6 +8,17 @@ public class Ball : MonoBehaviour
     [SerializeField] Transform Transform;
     [SerializeField] MeshRenderer meshRenderer;
     public bool isEnd = false;
+    static float sleepThreshold;
+    public bool isOutOfBounds = false;
+    public void SetSleepThreshold(float newVal)
+    {
+        sleepThreshold = newVal;
+        rb.sleepThreshold = sleepThreshold;
+    }
+    private void Start()
+    {
+        rb.sleepThreshold = sleepThreshold;
+    }
     public void Throw(Vector3 direction, float force)
     {
         rb.isKinematic = false;
@@ -17,6 +28,19 @@ public class Ball : MonoBehaviour
     {
         rb.isKinematic = true;
     }
+    private void FixedUpdate()
+    {
+        CheckBounds();
+    }
+    public void CheckBounds()
+    {
+        if (!GameController.Instance().IsPointInBounds(transform.position))
+        {
+            StopBall();
+            meshRenderer.enabled = false;
+            isOutOfBounds = true;
+        }
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Lunka")
@@ -25,5 +49,10 @@ public class Ball : MonoBehaviour
             meshRenderer.enabled = false;
             StopBall();
         }
+    }
+    public void ResetAfterOutOfBounds()
+    {
+        meshRenderer.enabled = true;
+        isOutOfBounds = false;
     }
 }
