@@ -131,4 +131,4 @@ MonoBehaviour:
   Transform: {fileID: 5087638754375646602}
   meshRenderer: {fileID: 6255993156996548325}
   isEnd: 0
-  sleepThreshold: 1
+  isOutOfBounds: 0

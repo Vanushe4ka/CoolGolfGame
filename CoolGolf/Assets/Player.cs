@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     [SerializeField] CanvasGroup canvasGroup;
     [SerializeField] Text nameText;
     [SerializeField] SliderEvents sliderEvent;
+
     [SerializeField] ArrowController arrow;
     [SerializeField] Ball ball;
     [SerializeField] Ball ballPrefab;
@@ -271,7 +272,7 @@ public class Player : MonoBehaviour
             List<Vector3> points  = lineC.PredictTrajectory(ball.transform.position, arrow.GetDirection() + CalcUpDirection(), throwingForce, ballPrefab);
             ball.Throw(arrow.GetDirection() + CalcUpDirection(), throwingForce);
             ballCameraTarget.position = GenerateRandomPointOnCircle(points[points.Count - 1], ballCameraTargetDistance);
-            StartCoroutine(waitToBallStop(points.Count));
+            StartCoroutine(waitToBallStop());
             arrow.HideArrow();
         }
         sliderEvent.slider.value = 0;
@@ -291,7 +292,7 @@ public class Player : MonoBehaviour
         }
         return generatedPoint;
     }
-    IEnumerator waitToBallStop(int pointsCount)
+    IEnumerator waitToBallStop()
     {
         isBallMoving = true;
         while (!ball.rb.IsSleeping())
